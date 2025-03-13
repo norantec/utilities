@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid/dist/cjs-browser';
 
 export class StringUtil {
     public static isFalsyString(value: any, connector: 'AND' | 'OR' = 'AND') {
