@@ -1,24 +1,31 @@
 export class UUIDUtil {
     public static generateV4() {
-        let getRandomValues: (buffer: Uint8Array) => Uint8Array;
-
-        if (typeof window !== 'undefined' && typeof window.crypto?.getRandomValues === 'function') {
-            getRandomValues = window.crypto.getRandomValues.bind(window.crypto);
-        } else {
-            const crypto = require('crypto-browserify');
-            getRandomValues = (buffer: Uint8Array) => {
-                return new Uint8Array(crypto.randomFillSync(buffer));
-            };
+        if (typeof window !== 'undefined' && typeof window.crypto?.randomUUID === 'function') {
+            try {
+                return window.crypto.randomUUID();
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            } catch (e) {}
+        } else if (typeof global !== 'undefined' && typeof global.crypto?.randomUUID === 'function') {
+            try {
+                return global.crypto.randomUUID();
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            } catch (e) {}
         }
 
+        const hex: string[] = [];
         const bytes = new Uint8Array(16);
-        getRandomValues(bytes);
 
-        bytes[6] = (bytes[6] & 0x0f) | 0x40; // 版本号4
-        bytes[8] = (bytes[8] & 0x3f) | 0x80; // 变体
+        for (let i = 0; i < 16; i++) {
+            bytes[i] = Math.floor(Math.random() * 256);
+        }
 
-        return [...bytes]
-            .map((b, i) => ([4, 6, 8, 10].includes(i) ? '-' : '') + b.toString(16).padStart(2, '0'))
-            .join('');
+        bytes[6] = (bytes[6] & 0x0f) | 0x40;
+        bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+        for (let i = 0; i < 16; i++) {
+            hex.push(bytes[i].toString(16).padStart(2, '0'));
+        }
+
+        return `${hex[0]}${hex[1]}${hex[2]}${hex[3]}-${hex[4]}${hex[5]}-${hex[6]}${hex[7]}-${hex[8]}${hex[9]}-${hex[10]}${hex[11]}${hex[12]}${hex[13]}${hex[14]}${hex[15]}`;
     }
 }
