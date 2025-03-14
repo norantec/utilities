@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { UUIDUtil } from './uuid-util.class';
 
 export class StringUtil {
     public static isFalsyString(value: any, connector: 'AND' | 'OR' = 'AND') {
@@ -33,7 +33,7 @@ export class StringUtil {
     public static generateTempId() {
         const tempIds: string[] = [];
         while (true) {
-            const currentTempId = uuidv4();
+            const currentTempId = UUIDUtil.generateV4();
             if (tempIds.indexOf(currentTempId) === -1) {
                 tempIds.push(currentTempId);
                 return `temp$:${currentTempId}`;
