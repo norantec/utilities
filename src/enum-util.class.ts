@@ -14,6 +14,12 @@ export class EnumUtil {
         }
     }
 
+    public static isValidValue(inputEnum: Enum, inputValue: any) {
+        const entries = EnumUtil.getEntries(inputEnum);
+        if (entries.length === 0) return false;
+        return entries.some(([, value]) => value === inputValue);
+    }
+
     public static isEqual(enum1: Enum, enum2: Enum) {
         const entries1 = this.getEntries(enum1);
         const entries2 = this.getEntries(enum2);
