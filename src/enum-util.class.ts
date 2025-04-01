@@ -5,7 +5,9 @@ export interface Enum {
 export class EnumUtil {
     public static getEntries(inputEnum: Enum): Array<[string, any]> {
         try {
-            return Object.entries(inputEnum).filter(([key]) => Number.isNaN(Number(key)));
+            return Object.entries(inputEnum).filter(([key]) => {
+                return (key.length > 1 && key.startsWith('0')) || Number.isNaN(Number(key));
+            });
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (e) {
             return [];
