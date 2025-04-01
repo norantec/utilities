@@ -1,4 +1,4 @@
-interface Enum {
+export interface Enum {
     [x: string]: any;
 }
 
