@@ -7,9 +7,9 @@ export class AttemptUtil {
         }
     }
 
-    public static async execPromise<T>(callbackFn: () => Promise<T>): Promise<T | Error> {
+    public static async execPromise<T>(promise: Promise<T>): Promise<T | Error> {
         try {
-            return callbackFn?.()?.catch?.((error) => Promise.resolve(error as Error));
+            return promise?.catch?.((error) => Promise.resolve(error as Error));
         } catch (error) {
             return error as Error;
         }
