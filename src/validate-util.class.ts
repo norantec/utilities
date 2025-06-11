@@ -15,7 +15,7 @@ export class ValidateUtil {
      * Returns the fully casted and validated result.
      * Throws if validation fails.
      */
-    public static cast<T extends Schema<any>>(schema: T, input: unknown): InferType<T> {
+    public static cast<T extends Schema<any, any, any, any>>(schema: T, input: unknown): InferType<T> {
         const casted = schema.cast(input);
         schema.validateSync(casted); // throws if invalid
         return casted as InferType<T>;
