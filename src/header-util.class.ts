@@ -6,12 +6,16 @@ export class HeaderUtil {
             if (!headers || StringUtil.isFalsyString(name)) {
                 return null;
             }
-            return Object.entries(headers).find(([key]) => {
-                if (StringUtil.isFalsyString(key) || key.toUpperCase() !== name.toUpperCase()) {
-                    return false;
-                }
-                return true;
-            })?.[1];
+            try {
+                return Object.entries(headers).find(([key]) => {
+                    if (StringUtil.isFalsyString(key) || key.toUpperCase() !== name.toUpperCase()) {
+                        return false;
+                    }
+                    return true;
+                })?.[1];
+            } catch {
+                return null;
+            }
         };
         return {
             getValue,
