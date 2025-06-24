@@ -57,6 +57,7 @@ export class SchemaUtil {
         'substring',
         'values',
     ]);
+    public static readonly LOG_LEVEL = z.enum(['error', 'warn', 'info', 'debug', 'verbose']);
     public static readonly COMMON_RESULT = z
         .object({
             succeeded: z.boolean(),
@@ -104,9 +105,10 @@ export class SchemaUtil {
 
 export namespace Schema {
     export type CommonResult = z.infer<typeof SchemaUtil.COMMON_RESULT>;
-    export type IDObject = z.infer<typeof SchemaUtil.ID_OBJECT>;
     export type File = z.infer<typeof SchemaUtil.FILE>;
     export type FindOneOptions = z.infer<typeof SchemaUtil.FIND_ONE_OPTIONS>;
+    export type IDObject = z.infer<typeof SchemaUtil.ID_OBJECT>;
+    export type LogLevel = z.infer<typeof SchemaUtil.LOG_LEVEL>;
     export type OrderItem = z.infer<typeof SchemaUtil.ORDER_ITEM>;
     export type OrderOrientation = z.infer<typeof SchemaUtil.ORDER_ORIENTATION>;
     export type PaginationOptions = z.infer<typeof SchemaUtil.PAGINATION_OPTIONS>;
