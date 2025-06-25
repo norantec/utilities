@@ -6,3 +6,4 @@ export * from './string-util.class';
 export * from './user-agent-util.class';
 export * from './enum-util.class';
 export * from './schema-util.class';
+export * from './log-util.class';
