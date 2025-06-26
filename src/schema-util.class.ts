@@ -15,8 +15,8 @@ export class SchemaUtil {
         }
     });
     public static readonly TIME_RECORD = z.object({
-        createdAt: z.date().optional(),
-        updatedAt: z.date().optional(),
+        createdAt: z.string().optional(),
+        updatedAt: z.string().optional(),
     });
     public static readonly ORDER_ORIENTATION = z.enum(['ASC', 'DESC']);
     public static readonly WHERE_CLAUSE_OP = z.enum([
