@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { z } from 'zod';
+import { DateUtil } from './date-util.class';
 
 export class SchemaUtil {
     public static readonly ID = z.string().uuid();
@@ -14,9 +15,10 @@ export class SchemaUtil {
             return false;
         }
     });
+    public static readonly DATE_STRING = z.string().refine((value) => DateUtil.isValidDateString(value));
     public static readonly TIME_RECORD = z.object({
-        createdAt: z.string().optional(),
-        updatedAt: z.string().optional(),
+        createdAt: SchemaUtil.DATE_STRING.nullable().optional(),
+        updatedAt: SchemaUtil.DATE_STRING.nullable().optional(),
     });
     public static readonly ORDER_ORIENTATION = z.enum(['ASC', 'DESC']);
     public static readonly WHERE_CLAUSE_OP = z.enum([
