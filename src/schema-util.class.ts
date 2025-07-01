@@ -55,6 +55,10 @@ export namespace Enum {
 }
 
 export class SchemaUtil {
+    public static createEnumSchema<const T extends Record<string, string>>(object: T) {
+        return z.enum(Object.values(object) as [T[keyof T], ...T[keyof T][]]);
+    }
+
     public static readonly ID = z.string().uuid();
     public static readonly ID_OBJECT = z.object({
         id: SchemaUtil.ID,
@@ -72,52 +76,9 @@ export class SchemaUtil {
         createdAt: SchemaUtil.DATE_STRING.nullable().optional(),
         updatedAt: SchemaUtil.DATE_STRING.nullable().optional(),
     });
-    public static readonly ORDER_ORIENTATION = z.enum([Enum.OrderOrientation.ASC, Enum.OrderOrientation.DESC]);
-    public static readonly WHERE_CLAUSE_OP = z.enum([
-        Enum.WhereClauseOp.ADJACENT,
-        Enum.WhereClauseOp.ANY,
-        Enum.WhereClauseOp.BETWEEN,
-        Enum.WhereClauseOp.COL,
-        Enum.WhereClauseOp.CONTAINED,
-        Enum.WhereClauseOp.CONTAINS,
-        Enum.WhereClauseOp.ENDS_WITH,
-        Enum.WhereClauseOp.EQ,
-        Enum.WhereClauseOp.GT,
-        Enum.WhereClauseOp.GTE,
-        Enum.WhereClauseOp.I_LIKE,
-        Enum.WhereClauseOp.IN,
-        Enum.WhereClauseOp.I_REGEXP,
-        Enum.WhereClauseOp.IS,
-        Enum.WhereClauseOp.LIKE,
-        Enum.WhereClauseOp.LT,
-        Enum.WhereClauseOp.LTE,
-        Enum.WhereClauseOp.MATCH,
-        Enum.WhereClauseOp.NE,
-        Enum.WhereClauseOp.NO_EXTEND_LEFT,
-        Enum.WhereClauseOp.NO_EXTEND_RIGHT,
-        Enum.WhereClauseOp.NOT,
-        Enum.WhereClauseOp.NOT_BETWEEN,
-        Enum.WhereClauseOp.NOT_I_LIKE,
-        Enum.WhereClauseOp.NOT_IN,
-        Enum.WhereClauseOp.NOT_I_REGEXP,
-        Enum.WhereClauseOp.NOT_LIKE,
-        Enum.WhereClauseOp.NOT_REGEXP,
-        Enum.WhereClauseOp.OVERLAP,
-        Enum.WhereClauseOp.PLACEHOLDER,
-        Enum.WhereClauseOp.REGEXP,
-        Enum.WhereClauseOp.STARTS_WITH,
-        Enum.WhereClauseOp.STRICT_LEFT,
-        Enum.WhereClauseOp.STRICT_RIGHT,
-        Enum.WhereClauseOp.SUBSTRING,
-        Enum.WhereClauseOp.VALUES,
-    ]);
-    public static readonly LOG_LEVEL = z.enum([
-        Enum.LogLevel.ERROR,
-        Enum.LogLevel.WARN,
-        Enum.LogLevel.INFO,
-        Enum.LogLevel.DEBUG,
-        Enum.LogLevel.VERBOSE,
-    ]);
+    public static readonly ORDER_ORIENTATION = SchemaUtil.createEnumSchema(Enum.OrderOrientation);
+    public static readonly WHERE_CLAUSE_OP = SchemaUtil.createEnumSchema(Enum.WhereClauseOp);
+    public static readonly LOG_LEVEL = SchemaUtil.createEnumSchema(Enum.LogLevel);
     public static readonly COMMON_RESULT = z
         .object({
             succeeded: z.boolean(),
