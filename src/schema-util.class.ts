@@ -99,7 +99,7 @@ export class SchemaUtil {
         createdAtField: z.union([z.string().optional().default('createdAt'), z.undefined()]),
         cursorField: z.union([z.string().optional().default('id'), z.undefined()]),
         lastCursor: z.string().optional(),
-        limit: z.number().positive().optional(),
+        limit: z.number().min(0).optional(),
         order: z.array(SchemaUtil.ORDER_ITEM).optional(),
         where: z.array(z.array(SchemaUtil.WHERE_CLAUSE).min(1)).optional(),
     });
@@ -118,7 +118,7 @@ export class SchemaUtil {
             mimeType: z.string(),
             name: z.string(),
             progres: z.number().min(0).max(1),
-            size: z.number().positive(),
+            size: z.number().min(0),
             url: z.string(),
         })
         .merge(SchemaUtil.TIME_RECORD);
