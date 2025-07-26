@@ -106,7 +106,6 @@ export class SchemaUtil {
     public static readonly FIND_ONE_OPTIONS = SchemaUtil.PAGINATION_OPTIONS.omit({
         limit: true,
         lastCursor: true,
-        order: true,
     });
     public static readonly PAGINATION_RESULT = z.object({
         hasNext: z.boolean(),
