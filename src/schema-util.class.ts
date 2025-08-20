@@ -49,8 +49,8 @@ export namespace Enum {
         ERROR: 'error',
         WARN: 'warn',
         INFO: 'info',
-        DEBUG: 'debug',
         VERBOSE: 'verbose',
+        DEBUG: 'debug',
     } as const;
 }
 
