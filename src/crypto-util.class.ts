@@ -5,7 +5,7 @@ export class CryptoUtil {
         keyUsages: Iterable<KeyUsage>,
     ) {
         // Remove PEM headers, footers, and newlines
-        const base64 = pemString.replace(/(-----(BEGIN|END) PRIVATE KEY-----|\n|\r)/g, '').trim();
+        const base64 = pemString.replace(/(-----(BEGIN|END) (PUBLIC|PRIVATE) KEY-----|\n|\r)/g, '').trim();
 
         // Base64 decode to binary string
         const binaryString = atob(base64);
