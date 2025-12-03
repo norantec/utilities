@@ -86,11 +86,14 @@ export class SchemaUtil {
         })
         .merge(SchemaUtil.ID_OBJECT.partial())
         .merge(SchemaUtil.TIME_RECORD);
-    public static readonly WHERE_CLAUSE = z.object({
-        field: z.string(),
-        op: SchemaUtil.WHERE_CLAUSE_OP,
-        value: SchemaUtil.JSON_STRING,
-    });
+    public static readonly WHERE_CLAUSE = z.union([
+        z.object({
+            field: z.string(),
+            op: SchemaUtil.WHERE_CLAUSE_OP,
+            value: SchemaUtil.JSON_STRING,
+        }),
+        z.string().min(1),
+    ]);
     public static readonly ORDER_ITEM = z.object({
         field: z.string(),
         orientation: SchemaUtil.ORDER_ORIENTATION,
