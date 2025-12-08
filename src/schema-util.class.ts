@@ -86,13 +86,14 @@ export class SchemaUtil {
         })
         .merge(SchemaUtil.ID_OBJECT.partial())
         .merge(SchemaUtil.TIME_RECORD);
+    public static readonly LITERAL_WHERE_CLAUSE = z.object({
+        field: z.string(),
+        op: SchemaUtil.WHERE_CLAUSE_OP,
+        type: z.literal('clause'),
+        value: SchemaUtil.JSON_STRING,
+    });
     public static readonly WHERE_CLAUSE = z.discriminatedUnion('type', [
-        z.object({
-            field: z.string(),
-            op: SchemaUtil.WHERE_CLAUSE_OP,
-            type: z.literal('clause'),
-            value: SchemaUtil.JSON_STRING,
-        }),
+        SchemaUtil.LITERAL_WHERE_CLAUSE,
         z.object({
             literal: z.string().min(1),
             type: z.literal('literal'),
@@ -128,6 +129,9 @@ export class SchemaUtil {
             url: z.string(),
         })
         .merge(SchemaUtil.TIME_RECORD);
+    public static readonly OPEN_API_PAGINATION_OPTIONS = SchemaUtil.PAGINATION_OPTIONS.omit({ where: true }).extend({
+        where: SchemaUtil.LITERAL_WHERE_CLAUSE,
+    });
 }
 
 export namespace Schema {
@@ -136,6 +140,8 @@ export namespace Schema {
     export type FindOneOptions = z.infer<typeof SchemaUtil.FIND_ONE_OPTIONS>;
     export type IDObject = z.infer<typeof SchemaUtil.ID_OBJECT>;
     export type LogLevel = z.infer<typeof SchemaUtil.LOG_LEVEL>;
+    export type LiteralWhereClause = z.infer<typeof SchemaUtil.LITERAL_WHERE_CLAUSE>;
+    export type OpenApiPaginationOptions = z.infer<typeof SchemaUtil.OPEN_API_PAGINATION_OPTIONS>;
     export type OrderItem = z.infer<typeof SchemaUtil.ORDER_ITEM>;
     export type OrderOrientation = z.infer<typeof SchemaUtil.ORDER_ORIENTATION>;
     export type PaginationOptions = z.infer<typeof SchemaUtil.PAGINATION_OPTIONS>;
