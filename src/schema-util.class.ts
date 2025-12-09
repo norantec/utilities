@@ -132,6 +132,9 @@ export class SchemaUtil {
     public static readonly OPEN_API_PAGINATION_OPTIONS = SchemaUtil.PAGINATION_OPTIONS.omit({ where: true }).extend({
         where: SchemaUtil.LITERAL_WHERE_CLAUSE,
     });
+    public static readonly OPEN_API_FIND_ONE_OPTIONS = SchemaUtil.FIND_ONE_OPTIONS.omit({ where: true }).extend({
+        where: SchemaUtil.LITERAL_WHERE_CLAUSE,
+    });
 }
 
 export namespace Schema {
@@ -141,6 +144,7 @@ export namespace Schema {
     export type IDObject = z.infer<typeof SchemaUtil.ID_OBJECT>;
     export type LogLevel = z.infer<typeof SchemaUtil.LOG_LEVEL>;
     export type LiteralWhereClause = z.infer<typeof SchemaUtil.LITERAL_WHERE_CLAUSE>;
+    export type OpenApiFindOneOptions = z.infer<typeof SchemaUtil.OPEN_API_FIND_ONE_OPTIONS>;
     export type OpenApiPaginationOptions = z.infer<typeof SchemaUtil.OPEN_API_PAGINATION_OPTIONS>;
     export type OrderItem = z.infer<typeof SchemaUtil.ORDER_ITEM>;
     export type OrderOrientation = z.infer<typeof SchemaUtil.ORDER_ORIENTATION>;
