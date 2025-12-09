@@ -2,6 +2,20 @@
 import { z } from 'zod';
 import { DateUtil } from './date-util.class';
 
+const traverseWhereClauses = (context: z.RefinementCtx, where?: Schema.WhereClause[][], basePath = 'where') => {
+    where?.forEach?.((whereAGroup, aIndex) => {
+        whereAGroup?.forEach?.((whereClause, index) => {
+            if (whereClause?.type === 'literal') {
+                context.addIssue({
+                    code: 'custom',
+                    message: 'Literal where clause item is strictly forbidden for safety reasons',
+                    path: [basePath, aIndex.toString(), index.toString(), 'type'],
+                });
+            }
+        });
+    });
+};
+
 export namespace Enum {
     export const OrderOrientation = {
         ASC: 'ASC',
@@ -130,24 +144,10 @@ export class SchemaUtil {
         })
         .merge(SchemaUtil.TIME_RECORD);
     public static readonly OPEN_API_PAGINATION_OPTIONS = SchemaUtil.PAGINATION_OPTIONS.superRefine((value, context) => {
-        if (
-            value?.where?.some((whereAGroup) => whereAGroup?.some?.((whereClause) => whereClause?.type === 'literal'))
-        ) {
-            context.addIssue({
-                code: 'custom',
-                message: 'Not allowed to use literal by OpenAPI for safety reasons',
-            });
-        }
+        traverseWhereClauses(context, value?.where);
     });
     public static readonly OPEN_API_FIND_ONE_OPTIONS = SchemaUtil.FIND_ONE_OPTIONS.superRefine((value, context) => {
-        if (
-            value?.where?.some((whereAGroup) => whereAGroup?.some?.((whereClause) => whereClause?.type === 'literal'))
-        ) {
-            context.addIssue({
-                code: 'custom',
-                message: 'Not allowed to use literal by OpenAPI for safety reasons',
-            });
-        }
+        traverseWhereClauses(context, value?.where);
     });
 }
 
