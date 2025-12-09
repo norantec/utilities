@@ -108,7 +108,6 @@ export class SchemaUtil {
             context.addIssue({
                 code: 'custom',
                 message: 'Literal where clause item is strictly forbidden for safety reasons',
-                path: context?.path,
             });
         }
     });
