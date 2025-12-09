@@ -2,19 +2,10 @@
 import { z } from 'zod';
 import { DateUtil } from './date-util.class';
 
-const traverseWhereClauses = (context: z.RefinementCtx, where?: Schema.WhereClause[][], basePath = 'where') => {
-    where?.forEach?.((whereAGroup, aIndex) => {
-        whereAGroup?.forEach?.((whereClause, index) => {
-            if (whereClause?.type === 'literal') {
-                context.addIssue({
-                    code: 'custom',
-                    message: 'Literal where clause item is strictly forbidden for safety reasons',
-                    path: [basePath, aIndex.toString(), index.toString(), 'type'],
-                });
-            }
-        });
-    });
-};
+const FIND_ONE_OPTIONS_OMIT_PARAMS = {
+    limit: true,
+    lastCursor: true,
+} as const;
 
 export namespace Enum {
     export const OrderOrientation = {
@@ -100,19 +91,27 @@ export class SchemaUtil {
         })
         .merge(SchemaUtil.ID_OBJECT.partial())
         .merge(SchemaUtil.TIME_RECORD);
-    public static readonly LITERAL_WHERE_CLAUSE = z.object({
-        field: z.string(),
-        op: SchemaUtil.WHERE_CLAUSE_OP,
-        type: z.literal('clause'),
-        value: SchemaUtil.JSON_STRING,
-    });
     public static readonly WHERE_CLAUSE = z.discriminatedUnion('type', [
-        SchemaUtil.LITERAL_WHERE_CLAUSE,
+        z.object({
+            field: z.string(),
+            op: SchemaUtil.WHERE_CLAUSE_OP,
+            type: z.literal('condition'),
+            value: SchemaUtil.JSON_STRING,
+        }),
         z.object({
             literal: z.string().min(1),
             type: z.literal('literal'),
         }),
     ]);
+    public static readonly CONDITION_ONLY_WHERE_CLAUSE = SchemaUtil.WHERE_CLAUSE.superRefine((value, context) => {
+        if (value?.type === 'literal') {
+            context.addIssue({
+                code: 'custom',
+                message: 'Literal where clause item is strictly forbidden for safety reasons',
+                path: context?.path,
+            });
+        }
+    });
     public static readonly ORDER_ITEM = z.object({
         field: z.string(),
         orientation: SchemaUtil.ORDER_ORIENTATION,
@@ -125,10 +124,7 @@ export class SchemaUtil {
         order: z.array(SchemaUtil.ORDER_ITEM).optional(),
         where: z.array(z.array(SchemaUtil.WHERE_CLAUSE).min(1)).optional(),
     });
-    public static readonly FIND_ONE_OPTIONS = SchemaUtil.PAGINATION_OPTIONS.omit({
-        limit: true,
-        lastCursor: true,
-    });
+    public static readonly FIND_ONE_OPTIONS = SchemaUtil.PAGINATION_OPTIONS.omit(FIND_ONE_OPTIONS_OMIT_PARAMS);
     public static readonly PAGINATION_RESULT = z.object({
         hasNext: z.boolean(),
         nextCursor: z.union([z.string(), z.null()]),
@@ -143,12 +139,11 @@ export class SchemaUtil {
             url: z.string(),
         })
         .merge(SchemaUtil.TIME_RECORD);
-    public static readonly OPEN_API_PAGINATION_OPTIONS = SchemaUtil.PAGINATION_OPTIONS.superRefine((value, context) => {
-        traverseWhereClauses(context, value?.where);
-    });
-    public static readonly OPEN_API_FIND_ONE_OPTIONS = SchemaUtil.FIND_ONE_OPTIONS.superRefine((value, context) => {
-        traverseWhereClauses(context, value?.where);
-    });
+    public static readonly CONDITION_ONLY_PAGINATION_OPTIONS = SchemaUtil.PAGINATION_OPTIONS.omit({
+        where: true,
+    }).extend({ where: z.array(z.array(SchemaUtil.CONDITION_ONLY_WHERE_CLAUSE).min(1)).optional() });
+    public static readonly CONDITION_ONLY_FIND_ONE_OPTIONS =
+        SchemaUtil.CONDITION_ONLY_PAGINATION_OPTIONS.omit(FIND_ONE_OPTIONS_OMIT_PARAMS);
 }
 
 export namespace Schema {
@@ -157,7 +152,6 @@ export namespace Schema {
     export type FindOneOptions = z.infer<typeof SchemaUtil.FIND_ONE_OPTIONS>;
     export type IDObject = z.infer<typeof SchemaUtil.ID_OBJECT>;
     export type LogLevel = z.infer<typeof SchemaUtil.LOG_LEVEL>;
-    export type LiteralWhereClause = z.infer<typeof SchemaUtil.LITERAL_WHERE_CLAUSE>;
     export type OrderItem = z.infer<typeof SchemaUtil.ORDER_ITEM>;
     export type OrderOrientation = z.infer<typeof SchemaUtil.ORDER_ORIENTATION>;
     export type PaginationOptions = z.infer<typeof SchemaUtil.PAGINATION_OPTIONS>;
