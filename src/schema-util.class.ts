@@ -129,11 +129,25 @@ export class SchemaUtil {
             url: z.string(),
         })
         .merge(SchemaUtil.TIME_RECORD);
-    public static readonly OPEN_API_PAGINATION_OPTIONS = SchemaUtil.PAGINATION_OPTIONS.omit({ where: true }).extend({
-        where: SchemaUtil.LITERAL_WHERE_CLAUSE,
+    public static readonly OPEN_API_PAGINATION_OPTIONS = SchemaUtil.PAGINATION_OPTIONS.superRefine((value, context) => {
+        if (
+            value?.where?.some((whereAGroup) => whereAGroup?.some?.((whereClause) => whereClause?.type === 'literal'))
+        ) {
+            context.addIssue({
+                code: 'custom',
+                message: 'Not allowed to use literal by OpenAPI for safety reasons',
+            });
+        }
     });
-    public static readonly OPEN_API_FIND_ONE_OPTIONS = SchemaUtil.FIND_ONE_OPTIONS.omit({ where: true }).extend({
-        where: SchemaUtil.LITERAL_WHERE_CLAUSE,
+    public static readonly OPEN_API_FIND_ONE_OPTIONS = SchemaUtil.FIND_ONE_OPTIONS.superRefine((value, context) => {
+        if (
+            value?.where?.some((whereAGroup) => whereAGroup?.some?.((whereClause) => whereClause?.type === 'literal'))
+        ) {
+            context.addIssue({
+                code: 'custom',
+                message: 'Not allowed to use literal by OpenAPI for safety reasons',
+            });
+        }
     });
 }
 
@@ -144,8 +158,6 @@ export namespace Schema {
     export type IDObject = z.infer<typeof SchemaUtil.ID_OBJECT>;
     export type LogLevel = z.infer<typeof SchemaUtil.LOG_LEVEL>;
     export type LiteralWhereClause = z.infer<typeof SchemaUtil.LITERAL_WHERE_CLAUSE>;
-    export type OpenApiFindOneOptions = z.infer<typeof SchemaUtil.OPEN_API_FIND_ONE_OPTIONS>;
-    export type OpenApiPaginationOptions = z.infer<typeof SchemaUtil.OPEN_API_PAGINATION_OPTIONS>;
     export type OrderItem = z.infer<typeof SchemaUtil.ORDER_ITEM>;
     export type OrderOrientation = z.infer<typeof SchemaUtil.ORDER_ORIENTATION>;
     export type PaginationOptions = z.infer<typeof SchemaUtil.PAGINATION_OPTIONS>;
