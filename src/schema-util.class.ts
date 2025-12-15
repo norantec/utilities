@@ -100,6 +100,7 @@ export class SchemaUtil {
         }),
         z.object({
             literal: z.string().min(1),
+            params: z.array(z.any()).optional(),
             type: z.literal('literal'),
         }),
     ]);
