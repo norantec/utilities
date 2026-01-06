@@ -8,3 +8,5 @@ export * from './enum-util.class';
 export * from './schema-util.class';
 export * from './log-util.class';
 export * from './crypto-util.class';
+export * from './date-util.class';
+export * from './url-util.class';
