@@ -118,10 +118,12 @@ export class SchemaUtil {
   });
   public static readonly PAGINATION_OPTIONS = z.object({
     cursorField: z.union([z.string().optional().default('id'), z.undefined()]),
+    cursorFieldOrderOrientation: z.union([SchemaUtil.ORDER_ORIENTATION.default('DESC'), z.undefined()]),
     lastCursor: z.string().optional(),
     limit: z.number().min(0).optional(),
     order: z.array(SchemaUtil.ORDER_ITEM).optional(),
     orderField: z.union([z.string().optional().default('createdAt'), z.undefined()]),
+    orderFieldOrderOrientation: z.union([SchemaUtil.ORDER_ORIENTATION.default('DESC'), z.undefined()]),
     where: z.array(z.array(SchemaUtil.WHERE_CLAUSE).min(1)).optional(),
   });
   public static readonly FIND_ONE_OPTIONS = SchemaUtil.PAGINATION_OPTIONS.omit(FIND_ONE_OPTIONS_OMIT_PARAMS);
