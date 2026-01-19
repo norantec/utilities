@@ -129,7 +129,7 @@ export class SchemaUtil {
       .object({
         fields: z.array(
           z.union([
-            z.string(),
+            z.string().min(1),
             z.object({
               field: z.string().min(1),
               ratio: z.number().min(-1).max(1).optional().default(1),
