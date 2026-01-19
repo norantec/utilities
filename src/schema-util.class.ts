@@ -65,6 +65,7 @@ export class SchemaUtil {
   }
 
   public static readonly ID = z.string().uuid();
+  public static readonly ID_LIST = z.array(SchemaUtil.ID).min(1);
   public static readonly ID_OBJECT = z.object({
     id: SchemaUtil.ID,
   });
