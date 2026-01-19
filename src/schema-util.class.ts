@@ -121,6 +121,16 @@ export class SchemaUtil {
     cursorFieldOrderOrientation: z.union([SchemaUtil.ORDER_ORIENTATION.default('DESC'), z.undefined()]),
     lastCursor: z.string().optional(),
     limit: z.number().min(0).optional(),
+    search: z
+      .array(
+        z.object({
+          field: z.string().min(1),
+          ratio: z.number().min(-1).max(1).optional().default(1),
+          value: z.string().min(1),
+        }),
+      )
+      .min(1)
+      .optional(),
     order: z.array(SchemaUtil.ORDER_ITEM).optional(),
     orderField: z.union([z.string().optional().default('createdAt'), z.undefined()]),
     orderFieldOrderOrientation: z.union([SchemaUtil.ORDER_ORIENTATION.default('DESC'), z.undefined()]),
