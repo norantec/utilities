@@ -13,7 +13,7 @@ export class LogUtil {
     return LOG_LEVELS.slice(LOG_LEVELS.findIndex((level) => level === bottomLogLevel)).includes(logLevel);
   }
 
-  public log(level: Schema.LogLevel, message: string, extraMessage?: string) {
+  public log(level: Schema.LogLevel, message: string) {
     const colorizer = (() => {
       switch (level) {
         case 'debug':
@@ -33,7 +33,10 @@ export class LogUtil {
 
     if (this.match(this.defaultLogLevel, level) === false) return;
 
-    const finalExtraMessage = level === 'debug' ? new Error().stack?.split?.('\n')?.slice(1)?.join('\n') : extraMessage;
+    const finalExtraMessage =
+      level === 'debug' || (this.defaultLogLevel === 'debug' && level === 'error')
+        ? new Error().stack?.split?.('\n')?.slice(1)?.join('\n')
+        : '';
 
     console.log(
       colorizer(
