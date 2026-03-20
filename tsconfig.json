@@ -9,7 +9,6 @@
     "target": "es2017",
     "sourceMap": false,
     "outDir": "./dist",
-    "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
     "noImplicitAny": false,
@@ -19,6 +18,7 @@
       "node_modules/@types",
       "typings"
     ],
+    "rootDir": "./src",
     "moduleResolution": "node",
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
