@@ -10,3 +10,4 @@ export * from './log-util.class';
 export * from './crypto-util.class';
 export * from './date-util.class';
 export * from './url-util.class';
+export * from './error-util.class';
