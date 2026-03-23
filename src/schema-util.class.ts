@@ -60,8 +60,8 @@ export namespace Enum {
 }
 
 export class SchemaUtil {
-  public static createEnumSchema<const T extends Record<string, string>>(object: T) {
-    return z.enum(Object.values(object) as [T[keyof T], ...T[keyof T][]]);
+  public static createEnumSchema<const T extends Record<string, string>>(object: T, params?: z.RawCreateParams) {
+    return z.enum(Object.values(object) as [T[keyof T], ...T[keyof T][]], params);
   }
 
   public static readonly ID = z.string().uuid();
