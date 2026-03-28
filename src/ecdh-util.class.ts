@@ -1,12 +1,8 @@
 import * as crypto from 'node:crypto';
 
 export class ECDHUtil {
+  public readonly ecdh = crypto.createECDH('secp256k1');
   protected readonly ALGORITHM: crypto.CipherGCMTypes = 'aes-256-gcm';
-  protected readonly ecdh = crypto.createECDH('secp256k1');
-
-  public constructor(protected readonly privateKey: Buffer) {
-    this.ecdh.setPrivateKey(new Uint8Array(privateKey));
-  }
 
   public encrypt(data: string, otherPublicKey: Buffer): string {
     const sharedKey = this.ecdh.computeSecret(new Uint8Array(otherPublicKey));
@@ -33,18 +29,15 @@ export class ECDHUtil {
   }
 }
 
-// const alice = crypto.createECDH('secp256k1');
-// const bob = crypto.createECDH('secp256k1');
+// const aliceUtil = new ECDHUtil();
+// const bobUtil = new ECDHUtil();
 
-// alice.generateKeys();
-// bob.generateKeys();
-
-// const aliceUtil = new ECDHUtil(alice.getPrivateKey());
-// const bobUtil = new ECDHUtil(bob.getPrivateKey());
+// aliceUtil.ecdh.generateKeys();
+// bobUtil.ecdh.generateKeys();
 
 // const message = 'Hello, Bob!';
-// const encryptedMessage = aliceUtil.encrypt(message, bob.getPublicKey());
+// const encryptedMessage = aliceUtil.encrypt(message, bobUtil.ecdh.getPublicKey());
 // console.log('Encrypted Message:', encryptedMessage);
 
-// const decryptedMessage = bobUtil.decrypt(encryptedMessage, alice.getPublicKey());
+// const decryptedMessage = bobUtil.decrypt(encryptedMessage, aliceUtil.ecdh.getPublicKey());
 // console.log('Decrypted Message:', decryptedMessage);
