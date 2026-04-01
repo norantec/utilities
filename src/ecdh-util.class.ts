@@ -1,8 +1,10 @@
 import * as crypto from 'node:crypto';
 
 export class ECDHUtil {
-  public readonly ecdh = crypto.createECDH('secp256k1');
+  public readonly ecdh = crypto.createECDH(this.curveName);
   protected readonly ALGORITHM: crypto.CipherGCMTypes = 'aes-256-gcm';
+
+  public constructor(private readonly curveName: string = 'prime256v1') {}
 
   public encrypt(data: string, otherPublicKey: Buffer): string {
     const sharedKey = this.ecdh.computeSecret(new Uint8Array(otherPublicKey));
