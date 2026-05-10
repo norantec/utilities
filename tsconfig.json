@@ -13,9 +13,7 @@
     "strictNullChecks": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "typeRoots": [
       "node_modules/@types",
       "typings"
@@ -25,10 +23,5 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
-  "exclude": [
-    "node_modules",
-    "test",
-    "dist",
-    "**/*spec.ts"
-  ]
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }

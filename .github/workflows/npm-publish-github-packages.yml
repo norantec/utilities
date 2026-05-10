@@ -7,10 +7,41 @@ on:
       - master
       - alpha
       - beta
-      - released
+      - release
+
+permissions:
+  actions: write
+  contents: read
+  packages: write
+  repository-projects: write
+  id-token: write
 
 jobs:
+  init:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Get and set shell variables
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          export ID_TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" $ACTIONS_ID_TOKEN_REQUEST_URL&audience=norantec)
+          export ID_TOKEN=$(echo $ID_TOKEN | jq -r '.value')
+          echo "ID_TOKEN=$ID_TOKEN"
+          curl -L -X POST -o .env-$RUN_ID -H 'Content-Type: application/json' -H "Authorization: Bearer $ID_TOKEN" -H 'Accept: */*' -d @env.json https://endpoint.norantec.com/env
+          cat .env-$RUN_ID
+
+      - name: Upload Cache
+        uses: actions/cache@v4
+        with:
+          key: env-${{ github.run_id }}
+          path: .env-${{ github.run_id }}
+
   build:
+    needs: init
+
     runs-on: ubuntu-latest
 
     steps:
@@ -29,19 +60,19 @@ jobs:
       - name: Run build
         run: npm run build
 
-      - name: Pack-up artifact
+      - name: Pack-up cache
         run: |
-          zip -r artifact.zip dist
+          zip -r cache.zip dist
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload cache
+        uses: actions/cache@v4
         if: |
           github.ref == 'refs/heads/alpha' ||
           github.ref == 'refs/heads/beta' ||
-          github.ref == 'refs/heads/released'
+          github.ref == 'refs/heads/release'
         with:
-          name: artifact-${{ github.run_id }}
-          path: artifact.zip
+          key: cache-${{ github.run_id }}
+          path: cache.zip
 
   publish:
     needs: build
@@ -52,7 +83,7 @@ jobs:
     if: |
       github.ref == 'refs/heads/alpha' ||
       github.ref == 'refs/heads/beta' ||
-      github.ref == 'refs/heads/released'
+      github.ref == 'refs/heads/release'
 
     steps:
       - name: Checkout code
@@ -64,14 +95,25 @@ jobs:
           node-version: '20'
           registry-url: 'https://npm.pkg.github.com/'
 
-      - name: Download artifact
-        uses: actions/download-artifact@v4
+      - name: Resume env cache
+        uses: actions/cache@v4
         with:
-          name: artifact-${{ github.run_id }}
+          key: env-${{ github.run_id }}
+          path: .env-${{ github.run_id }}
 
-      - name: Extract artifact
+      - name: Resume env
         run: |
-          unzip -o artifact.zip
+          awk '{ print }' .env-${{ github.run_id }} >> $GITHUB_ENV
+
+      - name: Download cache
+        uses: actions/cache@v4
+        with:
+          key: cache-${{ github.run_id }}
+          path: cache.zip
+
+      - name: Extract cache
+        run: |
+          unzip -o cache.zip
 
       - name: Check dist
         run: |
@@ -82,15 +124,18 @@ jobs:
 
       - name: Release with semantic-release
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ env.NPM_TOKEN }}
           BRANCH_NAME: ${{ github.ref_name }}
         run: nttc bump --type $BRANCH_NAME --config ./bump.config.json
 
       - name: Prepare NPMRC
+        env:
+          NPM_TOKEN: ${{ env.NPM_TOKEN }}
+          BRANCH_NAME: ${{ github.ref_name }}
         run: |
           echo "always-auth=true" >> ./.npmrc
           echo "@open-norantec:registry=https://registry.npmjs.org" >> ./.npmrc
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ./.npmrc
+          echo "//registry.npmjs.org/:_authToken=${{ env.NPM_TOKEN }}" >> ./.npmrc
 
       - name: Publish package
         run: npm publish
