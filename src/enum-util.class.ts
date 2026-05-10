@@ -1,3 +1,5 @@
+import { z } from './zod';
+
 export interface IEnum {
   [x: string]: any;
 }
@@ -39,5 +41,12 @@ export class EnumUtil {
     }
 
     return true;
+  }
+
+  public static createEnumSchema<const T extends Record<string, string>>(
+    object: T,
+    params?: Parameters<typeof z.enum>[1],
+  ) {
+    return z.enum(Object.values(object) as [T[keyof T], ...T[keyof T][]], params);
   }
 }

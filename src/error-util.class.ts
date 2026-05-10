@@ -1,4 +1,4 @@
-import { ZodError } from 'zod';
+import { ZodError } from './zod';
 import { UUIDUtil } from './uuid-util.class';
 
 function isZodError(error: unknown): error is ZodError {
