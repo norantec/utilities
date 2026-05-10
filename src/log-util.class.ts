@@ -1,19 +1,19 @@
-import { Schema } from './schema-util.class';
+import { EnumTypes } from './enums';
 import { StringUtil } from './string-util.class';
 import { cyan, gray, yellow, red } from 'colors';
 
-const LOG_LEVELS: Schema.LogLevel[] = ['debug', 'verbose', 'info', 'warn', 'error'];
+const LOG_LEVELS: EnumTypes.LogLevel[] = ['debug', 'verbose', 'info', 'warn', 'error'];
 
 export class LogUtil {
-  public constructor(private readonly defaultLogLevel: Schema.LogLevel = 'info') {}
+  public constructor(private readonly defaultLogLevel: EnumTypes.LogLevel = 'info') {}
 
-  public match(bottomLogLevel: Schema.LogLevel | boolean, logLevel: Schema.LogLevel) {
+  public match(bottomLogLevel: EnumTypes.LogLevel | boolean, logLevel: EnumTypes.LogLevel) {
     if (bottomLogLevel === false) return false;
     if (bottomLogLevel === true) return true;
     return LOG_LEVELS.slice(LOG_LEVELS.findIndex((level) => level === bottomLogLevel)).includes(logLevel);
   }
 
-  public log(level: Schema.LogLevel, message: string | Error) {
+  public log(level: EnumTypes.LogLevel, message: string | Error) {
     const colorizer = (() => {
       switch (level) {
         case 'debug':
