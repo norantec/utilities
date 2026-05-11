@@ -144,5 +144,3 @@ export namespace SchemaTypes {
   export type WhereClause = z.infer<typeof Schemas.WHERE_CLAUSE>;
   export type WhereClauseOp = z.infer<typeof Schemas.WHERE_CLAUSE_OP>;
 }
-
-console.log(Schemas.COMMON_RESULT.toJSONSchema());
