@@ -80,8 +80,8 @@ export namespace Schemas {
   });
 
   export const PAGINATION_OPTIONS = z.object({
-    cursorField: z.union([z.string().optional().default('id'), z.undefined()]).optional(),
-    cursorFieldOrderOrientation: z.union([Schemas.ORDER_ORIENTATION.default('DESC'), z.undefined()]).optional(),
+    cursorField: z.string().optional().default('id'),
+    cursorFieldOrderOrientation: Schemas.ORDER_ORIENTATION.optional().default('DESC'),
     lastCursor: z.string().optional(),
     limit: z.number().min(0).optional(),
     search: z
@@ -99,8 +99,8 @@ export namespace Schemas {
       })
       .optional(),
     order: z.array(Schemas.ORDER_ITEM).optional(),
-    orderField: z.union([z.string().optional().default('createdAt'), z.undefined()]).optional(),
-    orderFieldOrderOrientation: z.union([Schemas.ORDER_ORIENTATION.default('DESC'), z.undefined()]).optional(),
+    orderField: z.string().optional().default('createdAt'),
+    orderFieldOrderOrientation: Schemas.ORDER_ORIENTATION.optional().default('DESC'),
     where: z.array(z.array(Schemas.WHERE_CLAUSE).min(1)).optional(),
   });
 
@@ -131,7 +131,7 @@ export namespace Schemas {
 }
 
 export namespace SchemaTypes {
-  export type CommonResult = z.output<typeof Schemas.COMMON_RESULT>;
+  export type CommonResult = z.infer<typeof Schemas.COMMON_RESULT>;
   export type File = z.infer<typeof Schemas.FILE>;
   export type FindOneOptions = z.infer<typeof Schemas.FIND_ONE_OPTIONS>;
   export type IDObject = z.infer<typeof Schemas.ID_OBJECT>;
