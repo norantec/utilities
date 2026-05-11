@@ -80,8 +80,8 @@ export namespace Schemas {
   });
 
   export const PAGINATION_OPTIONS = z.object({
-    cursorField: z.union([z.string().optional().default('id'), z.undefined()]),
-    cursorFieldOrderOrientation: z.union([Schemas.ORDER_ORIENTATION.default('DESC'), z.undefined()]),
+    cursorField: z.union([z.string().optional().default('id'), z.undefined()]).optional(),
+    cursorFieldOrderOrientation: z.union([Schemas.ORDER_ORIENTATION.default('DESC'), z.undefined()]).optional(),
     lastCursor: z.string().optional(),
     limit: z.number().min(0).optional(),
     search: z
@@ -99,8 +99,8 @@ export namespace Schemas {
       })
       .optional(),
     order: z.array(Schemas.ORDER_ITEM).optional(),
-    orderField: z.union([z.string().optional().default('createdAt'), z.undefined()]),
-    orderFieldOrderOrientation: z.union([Schemas.ORDER_ORIENTATION.default('DESC'), z.undefined()]),
+    orderField: z.union([z.string().optional().default('createdAt'), z.undefined()]).optional(),
+    orderFieldOrderOrientation: z.union([Schemas.ORDER_ORIENTATION.default('DESC'), z.undefined()]).optional(),
     where: z.array(z.array(Schemas.WHERE_CLAUSE).min(1)).optional(),
   });
 
